@@ -1,6 +1,9 @@
 #include "window.hpp"
 #include <cassert>
 #include <format>
+#include <imgui.h>
+#include <imgui_impl_sdl2.h>
+#include <imgui_impl_sdlrenderer2.h>
 #include <iostream>
 #include <SDL2/SDL.h>
 
@@ -17,6 +20,21 @@ Window::Window(const char* title)
 
   this->logEnv();
   this->logDisplayInfo();
+
+  this->renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+  assert(this->renderer);
+
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO& io = ImGui::GetIO();
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+  ImGui::StyleColorsDark();
+
+  // Setup Platform/Renderer backends
+  ImGui_ImplSDL2_InitForSDLRenderer(window, this->renderer);
+  ImGui_ImplSDLRenderer2_Init(this->renderer);
 }
 
 Window::~Window()
@@ -33,26 +51,35 @@ void Window::draw()
     SDL_GetWindowSize(this->window, &this->dimensions.width, &this->dimensions.height);
   }
 
-  SDL_Surface* surface = SDL_GetWindowSurface(this->window);
+  // Start the Dear ImGui frame
+  ImGui_ImplSDLRenderer2_NewFrame();
+  ImGui_ImplSDL2_NewFrame();
+  ImGui::NewFrame();
 
-  SDL_FillRect(surface, nullptr, SDL_MapRGB(surface->format, 0, 0, 0));
+  bool showDemoWindow = true;
+  ImGui::ShowDemoWindow(&showDemoWindow);
+
+  ImGui::Render();
+  ImGuiIO& io = ImGui::GetIO();
+  SDL_RenderSetScale(this->renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
+  SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 255);
+  SDL_RenderClear(this->renderer);
 
   int width = this->getWidth() / 3;
   int height = this->getHeight() / 3;
-  SDL_Rect fillRect = {this->getWidth() / 2 - width / 2, this->getHeight() / 2 - height / 2, width, height};
-  SDL_FillRect(surface, &fillRect, SDL_MapRGB(surface->format, 255, 0, 0));
+  SDL_Rect rect = {this->getWidth() / 2 - width / 2, this->getHeight() / 2 - height / 2, width, height};
+  SDL_SetRenderDrawColor(this->renderer, 255, 0, 0, 255);
+  SDL_RenderFillRect(this->renderer, &rect);
 
-  SDL_UpdateWindowSurface(this->window);
+  ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
+  SDL_RenderPresent(this->renderer);
 }
 
-void Window::handleWindowEvent(SDL_WindowEvent& event)
+void Window::handleEvent(SDL_Event& event)
 {
-  switch (event.event)
-  {
-  case SDL_WINDOWEVENT_RESIZED:
+  ImGui_ImplSDL2_ProcessEvent(&event);
+  if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
     this->needsResize = true;
-    break;
-  }
 }
 
 void Window::logEnv()

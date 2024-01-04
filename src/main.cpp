@@ -17,14 +17,11 @@ void run(Window& window)
     frameEnd += dt;
 
     while (SDL_PollEvent(&event))
-      switch (event.type)
-      {
-      case SDL_WINDOWEVENT:
-        window.handleWindowEvent(event.window);
-        break;
-      case SDL_QUIT:
+    {
+      window.handleEvent(event);
+      if (event.type == SDL_QUIT)
         return;
-      }
+    }
 
     window.draw();
     std::this_thread::sleep_until(frameEnd);

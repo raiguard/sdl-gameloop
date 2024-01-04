@@ -1,9 +1,9 @@
 #pragma once
-#include <SDL2/SDL_video.h>
 #include <memory>
+#include <SDL2/SDL_video.h>
+#include <SDL_events.h>
+#include <SDL_render.h>
 #include <string_view>
-
-struct SDL_WindowEvent;
 
 struct Dimensions
 {
@@ -17,15 +17,16 @@ public:
   Window(const char* title);
   ~Window();
   void draw();
-  void handleWindowEvent(SDL_WindowEvent& event);
+  void handleEvent(SDL_Event& event);
   int getWidth() const { return this->dimensions.width; }
   int getHeight() const { return this->dimensions.height; }
+
 private:
   void logEnv();
   void logDisplayInfo();
 
   SDL_Window* window;
-  SDL_GLContext context;
+  SDL_Renderer* renderer;
 
   Dimensions dimensions = {1920, 1080};
 
