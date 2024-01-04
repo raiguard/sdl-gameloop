@@ -20,7 +20,8 @@ class Window
 public:
   Window(const char* title);
   ~Window();
-  void draw(State& state);
+  void update(State& state);
+  void render(State& state);
   ImGuiIO& handleEvent(SDL_Event& event);
   int getWidth() const { return this->dimensions.width; }
   int getHeight() const { return this->dimensions.height; }

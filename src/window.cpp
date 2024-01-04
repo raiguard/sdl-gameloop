@@ -49,7 +49,7 @@ Window::~Window()
   SDL_Quit();
 }
 
-void Window::draw(State& state)
+void Window::update(State& state)
 {
   if (this->needsResize)
   {
@@ -104,7 +104,11 @@ void Window::draw(State& state)
   ImGui::SameLine(0, 4);
   ImGui::Button("##", ImVec2{40, 40});
   ImGui::End();
+}
 
+void Window::render(State& state)
+{
+  ImGuiIO& io = ImGui::GetIO();
   ImGui::Render();
   SDL_RenderSetScale(this->renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
   SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 255);

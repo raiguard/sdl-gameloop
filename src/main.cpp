@@ -31,8 +31,10 @@ void run(Window& window)
     }
 
     state.update();
+    window.update(state);
 
-    window.draw(state);
+    window.render(state);
+
     std::this_thread::sleep_until(frameEnd);
   }
 }
