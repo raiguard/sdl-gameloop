@@ -17,7 +17,7 @@ public:
   ~Window();
   void handleEvent(SDL_Event& event);
   void update(State& state);
-  void render(State& state);
+  void draw(State& state);
 
   Gui& getGui() { return *this->gui; }
 

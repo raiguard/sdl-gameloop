@@ -31,7 +31,7 @@ void update(State& state, Window& window)
 
 void render(State& state, Window& window)
 {
-  window.render(state);
+  window.draw(state);
 }
 
 void mainLoop(State& state, Window& window)

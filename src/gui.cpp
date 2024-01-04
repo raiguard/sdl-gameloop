@@ -26,7 +26,7 @@ Gui::~Gui()
   ImGui::DestroyContext();
 }
 
-void Gui::render(State& state)
+void Gui::draw(State& state)
 {
   if (state.showDemoWindow)
     ImGui::ShowDemoWindow(&state.showDemoWindow);

@@ -43,7 +43,7 @@ void Window::update(State& state)
   }
 }
 
-void Window::render(State& state)
+void Window::draw(State& state)
 {
   // GUI
 
@@ -51,7 +51,7 @@ void Window::render(State& state)
   ImGui_ImplSDL2_NewFrame();
   ImGui::NewFrame();
 
-  this->getGui().render(state);
+  this->getGui().draw(state);
 
   ImGuiIO& io = ImGui::GetIO();
   ImGui::Render();

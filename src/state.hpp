@@ -7,9 +7,6 @@ union SDL_Event;
 
 struct Dimensions
 {
-  Dimensions() : width(0), height(0) {}
-  Dimensions(int width, int height) : width(width), height(height) {}
-
   int width, height;
 };
 

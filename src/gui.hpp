@@ -13,7 +13,7 @@ public:
   Gui(SDL_Window* window, SDL_Renderer* renderer);
   ~Gui();
   void handleEvent(SDL_Event& event);
-  void render(State& state);
+  void draw(State& state);
 
   ImGuiIO* io;
 };
