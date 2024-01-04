@@ -13,8 +13,7 @@ bool handleEvents(State& state, Window& window)
     if (event.type == SDL_QUIT)
       return true;
 
-    window.handleEvent(event);
-    if (window.getGui().io->WantCaptureKeyboard)
+    if (window.handleEvent(event))
       continue;
 
     state.handleEvent(event);
@@ -61,8 +60,6 @@ void mainLoop(State& state, Window& window)
 
 int main(int argc, char** argv)
 {
-  setbuf(stdout, NULL);
-
   State state;
   Window window;
 

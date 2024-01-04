@@ -6,16 +6,6 @@
 #include <SDL_events.h>
 #include <SDL_scancode.h>
 
-State::State()
-    : heldKeys({
-          {SDL_SCANCODE_W, false},
-          {SDL_SCANCODE_A, false},
-          {SDL_SCANCODE_S, false},
-          {SDL_SCANCODE_D, false},
-      })
-{
-}
-
 void State::handleEvent(SDL_Event& event)
 {
   if (event.type != SDL_KEYDOWN && event.type != SDL_KEYUP)

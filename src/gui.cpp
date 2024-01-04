@@ -8,7 +8,6 @@ Gui::Gui(SDL_Window* window, SDL_Renderer* renderer)
 {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
-  this->io = &ImGui::GetIO();
 
   ImGui::StyleColorsDark();
 
@@ -29,7 +28,8 @@ void Gui::draw(State& state, Window& window)
   if (state.showDemoWindow)
     ImGui::ShowDemoWindow(&state.showDemoWindow);
 
-  ImGui::Text("Render: %.1f FPS (%.3f ms/frame)", this->io->Framerate, 1000.0f / this->io->Framerate);
+  ImGuiIO& io = ImGui::GetIO();
+  ImGui::Text("Render: %.1f FPS (%.3f ms/frame)", io.Framerate, 1000.0f / io.Framerate);
   ImGui::Text("Window: %dx%d", window.getWidth(), window.getHeight());
   ImGui::Text("Position: (%0.1f, %0.1f)", state.position.x, state.position.y);
   if (ImGui::Button("Show demo window"))
@@ -37,34 +37,12 @@ void Gui::draw(State& state, Window& window)
   ImGui::SameLine();
   if (ImGui::Button("Reset position"))
     state.position = ImVec2();
-
-  ImGui::SetNextWindowPos(ImVec2{window.getWidth() / 2.0f, float(window.getHeight())}, true, ImVec2{0.5, 1});
-  ImGui::Begin("Hotbar", nullptr,
-               ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-
-  ImGui::SameLine(0, 8);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::End();
+  if (ImGui::Checkbox("Use vsync", &window.useVsync))
+    window.updateVsync = true;
 }
 
-void Gui::handleEvent(SDL_Event& event)
+bool Gui::handleEvent(SDL_Event& event)
 {
   ImGui_ImplSDL2_ProcessEvent(&event);
+  return ImGui::GetIO().WantCaptureKeyboard;
 }

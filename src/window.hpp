@@ -15,14 +15,18 @@ class Window
 public:
   Window();
   ~Window();
-  void handleEvent(SDL_Event& event);
+  bool handleEvent(SDL_Event& event);
   void draw(State& state);
   int getWidth() { return this->width; }
   int getHeight() { return this->height; }
-
   Gui& getGui() { return *this->gui; }
 
+  bool useVsync = true;
+  bool updateVsync = true;
+
 private:
+  void init();
+
   SDL_Window* window;
   SDL_Renderer* renderer;
 
