@@ -1,7 +1,9 @@
 #include "window.hpp"
+#include <cassert>
 #include <format>
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 Window::Window(const char* title)
 {
@@ -10,27 +12,47 @@ Window::Window(const char* title)
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     throw std::runtime_error("Failed to initialize SDL");
 
-  this->window = SDL_CreateWindow(title, 0, 0, 1920, 1080, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-  this->refreshSurface();
+  this->window = SDL_CreateWindow(title, 0, 0, this->getWidth(), this->getHeight(),
+                                  SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+  assert(this->window);
+
   this->logEnv();
   this->logDisplayInfo();
+
+  this->context = SDL_GL_CreateContext(this->window);
+  assert(this->context);
 }
 
 Window::~Window()
 {
+  SDL_GL_DeleteContext(this->context);
   SDL_DestroyWindow(this->window);
   SDL_Quit();
 }
 
-void Window::refreshSurface()
+void Window::draw()
 {
-  this->surface = SDL_GetWindowSurface(this->window);
-  SDL_FillRect(this->surface, nullptr, SDL_MapRGB(this->surface->format, 0, 0, 0));
-  int width = this->surface->w / 3;
-  int height = this->surface->h / 3;
-  SDL_Rect fillRect = {this->surface->w / 2 - width / 2, this->surface->h / 2 - height / 2, width, height};
-  SDL_FillRect(this->surface, &fillRect, SDL_MapRGB(this->surface->format, 255, 0, 0));
-  SDL_UpdateWindowSurface(this->window);
+  if (this->needsResize)
+  {
+    this->needsResize = false;
+    SDL_GetWindowSize(this->window, &this->dimensions.width, &this->dimensions.height);
+  }
+
+  glViewport(0, 0, this->getWidth(), this->getHeight());
+  glClearColor(0.f, 0.f, 0.f, 0.f);
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  SDL_GL_SwapWindow(this->window);
+}
+
+void Window::handleWindowEvent(SDL_WindowEvent& event)
+{
+  switch (event.event)
+  {
+  case SDL_WINDOWEVENT_RESIZED:
+    this->needsResize = true;
+    break;
+  }
 }
 
 void Window::logEnv()

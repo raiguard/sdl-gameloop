@@ -1,5 +1,35 @@
 #include "window.hpp"
+#include <chrono>
 #include <SDL2/SDL.h>
+#include <thread>
+
+void run(Window& window)
+{
+  using clock = std::chrono::steady_clock;
+
+  SDL_Event event;
+  clock::time_point frameEnd;
+  clock::duration lastFrameTime;
+  while (true)
+  {
+    frameEnd = clock::now();
+    std::chrono::nanoseconds dt = std::chrono::nanoseconds(1000000000 / 144);
+    frameEnd += dt;
+
+    while (SDL_PollEvent(&event))
+      switch (event.type)
+      {
+      case SDL_WINDOWEVENT:
+        window.handleWindowEvent(event.window);
+        break;
+      case SDL_QUIT:
+        return;
+      }
+
+    window.draw();
+    std::this_thread::sleep_until(frameEnd);
+  }
+}
 
 int main(int argc, char** argv)
 {
@@ -7,29 +37,7 @@ int main(int argc, char** argv)
 
   Window window = Window("SDL Test");
 
-  SDL_Event ev;
-  bool quit = 0;
-  while (!quit)
-  {
-    if (SDL_PollEvent(&ev) == 0)
-    {
-      SDL_Delay(1);
-      continue;
-    }
-    switch (ev.type)
-    {
-    case SDL_WINDOWEVENT:
-      if (ev.window.event == SDL_WINDOWEVENT_RESIZED)
-        window.refreshSurface();
-      break;
-    case SDL_WINDOWEVENT_SHOWN:
-      window.refreshSurface();
-      break;
-    case SDL_QUIT:
-      quit = true;
-      break;
-    }
-  }
+  run(window);
 
   return 0;
 }
