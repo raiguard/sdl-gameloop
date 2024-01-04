@@ -1,4 +1,5 @@
 #include "window.hpp"
+#include "state.hpp"
 #include <cassert>
 #include <format>
 #include <imgui.h>
@@ -48,7 +49,7 @@ Window::~Window()
   SDL_Quit();
 }
 
-void Window::draw(ImVec2& position)
+void Window::draw(State& state)
 {
   if (this->needsResize)
   {
@@ -71,8 +72,12 @@ void Window::draw(ImVec2& position)
                            ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBackground;
   ImGui::Begin("Debug overlay", nullptr, flags);
   ImGui::Text("%.1f FPS (%.3f ms/frame)", io.Framerate, 1000.0f / io.Framerate);
-  if (ImGui::Button("Show demo"))
+  ImGui::Text("Position: (%0.1f, %0.1f)", state.position.x, state.position.y);
+  if (ImGui::Button("Show demo window"))
     this->showDemoWindow = !this->showDemoWindow;
+  ImGui::SameLine();
+  if (ImGui::Button("Reset position"))
+    state.position = ImVec2();
   ImGui::End();
 
   ImGui::SetNextWindowPos(ImVec2{this->getWidth() / 2.0f, float(this->getHeight())}, true, ImVec2{0.5, 1});
@@ -105,9 +110,8 @@ void Window::draw(ImVec2& position)
   SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 255);
   SDL_RenderClear(this->renderer);
 
-  int width = this->getWidth() / 3;
-  int height = this->getHeight() / 3;
-  SDL_Rect rect = {this->getWidth() / 2 - width / 2, int(this->getHeight() / 2.0f - height / 2.0f + position.y), width, height};
+  SDL_Rect rect = {int(this->getWidth() / 2.0f - 400 / 2.0f + state.position.x),
+                   int(this->getHeight() / 2.0f - 400 / 2.0f + state.position.y), 400, 400};
   SDL_SetRenderDrawColor(this->renderer, 255, 0, 0, 255);
   SDL_RenderFillRect(this->renderer, &rect);
 

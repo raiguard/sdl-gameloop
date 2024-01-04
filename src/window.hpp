@@ -6,6 +6,7 @@ struct ImGuiIO;
 struct ImVec2;
 struct SDL_Renderer;
 struct SDL_Window;
+struct State;
 union SDL_Event;
 
 struct Dimensions
@@ -19,7 +20,7 @@ class Window
 public:
   Window(const char* title);
   ~Window();
-  void draw(ImVec2& position);
+  void draw(State& state);
   ImGuiIO& handleEvent(SDL_Event& event);
   int getWidth() const { return this->dimensions.width; }
   int getHeight() const { return this->dimensions.height; }

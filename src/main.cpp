@@ -1,3 +1,4 @@
+#include "state.hpp"
 #include "window.hpp"
 #include <chrono>
 #include <imgui.h>
@@ -11,8 +12,7 @@ void run(Window& window)
   SDL_Event event;
   clock::time_point frameEnd;
   clock::duration lastFrameTime;
-  ImVec2 position;
-  bool movingUp = false;
+  State state;
   while (true)
   {
     frameEnd = clock::now();
@@ -27,16 +27,12 @@ void run(Window& window)
       if (io.WantCaptureKeyboard)
         continue;
 
-      if (event.type == SDL_KEYDOWN && event.key.keysym.scancode == SDL_SCANCODE_W && !movingUp)
-        movingUp = true;
-      else if (event.type == SDL_KEYUP && event.key.keysym.scancode == SDL_SCANCODE_W && movingUp)
-        movingUp = false;
+      state.handleEvent(event);
     }
 
-    if (movingUp)
-      position.y -= 5;
+    state.update();
 
-    window.draw(position);
+    window.draw(state);
     std::this_thread::sleep_until(frameEnd);
   }
 }
