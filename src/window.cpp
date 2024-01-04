@@ -23,12 +23,11 @@ Window::Window()
   this->renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
   assert(this->renderer);
 
-  this->gui = new Gui(this->window, this->renderer);
+  this->gui.reset(new Gui(this->window, this->renderer));
 }
 
 Window::~Window()
 {
-  delete this->gui;
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(this->window);
   SDL_Quit();

@@ -26,7 +26,7 @@ private:
   SDL_Window* window;
   SDL_Renderer* renderer;
 
-  Gui* gui;
+  std::unique_ptr<Gui> gui;
 
   bool needsResize = false;
   int width = 1920;

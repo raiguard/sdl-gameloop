@@ -9,8 +9,6 @@ Gui::Gui(SDL_Window* window, SDL_Renderer* renderer)
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   this->io = &ImGui::GetIO();
-  this->io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-  this->io->ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
   ImGui::StyleColorsDark();
 
@@ -31,18 +29,14 @@ void Gui::draw(State& state, Window& window)
   if (state.showDemoWindow)
     ImGui::ShowDemoWindow(&state.showDemoWindow);
 
-  ImGui::SetNextWindowPos(ImVec2{0, 0});
-  ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings |
-                           ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBackground;
-  ImGui::Begin("Debug overlay", nullptr, flags);
-  ImGui::Text("%.1f FPS (%.3f ms/frame)", this->io->Framerate, 1000.0f / this->io->Framerate);
+  ImGui::Text("Render: %.1f FPS (%.3f ms/frame)", this->io->Framerate, 1000.0f / this->io->Framerate);
+  ImGui::Text("Window: %dx%d", window.getWidth(), window.getHeight());
   ImGui::Text("Position: (%0.1f, %0.1f)", state.position.x, state.position.y);
   if (ImGui::Button("Show demo window"))
     state.showDemoWindow = !state.showDemoWindow;
   ImGui::SameLine();
   if (ImGui::Button("Reset position"))
     state.position = ImVec2();
-  ImGui::End();
 
   ImGui::SetNextWindowPos(ImVec2{window.getWidth() / 2.0f, float(window.getHeight())}, true, ImVec2{0.5, 1});
   ImGui::Begin("Hotbar", nullptr,
