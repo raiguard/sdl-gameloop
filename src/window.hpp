@@ -31,4 +31,5 @@ private:
   Dimensions dimensions = {1920, 1080};
 
   bool needsResize = false;
+  bool showDemoWindow = false;
 };

@@ -63,22 +63,41 @@ void Window::draw()
 
   ImGuiIO& io = ImGui::GetIO();
 
-  ImGui::ShowDemoWindow(nullptr);
+  if (this->showDemoWindow)
+    ImGui::ShowDemoWindow(&this->showDemoWindow);
 
   ImGui::SetNextWindowPos(ImVec2{static_cast<float>(this->getWidth()), 0}, true, ImVec2{1, 0});
   ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings |
                            ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBackground;
   ImGui::Begin("Debug overlay", nullptr, flags);
   ImGui::Text("%.1f FPS (%.3f ms/frame)", io.Framerate, 1000.0f / io.Framerate);
+  if (ImGui::Button("Show demo"))
+    this->showDemoWindow = !this->showDemoWindow;
   ImGui::End();
 
-  ImGui::SetNextWindowPos(ImVec2{0, 0});
-  ImGui::Begin("Main menu");
-  ImGui::Button("Singleplayer");
-  ImGui::Button("Multiplayer");
-  ImGui::Button("Map editor");
-  ImGui::Button("Settings");
-  ImGui::Button("Quit");
+  ImGui::SetNextWindowPos(ImVec2{this->getWidth() / 2.0f, float(this->getHeight())}, true, ImVec2{0.5, 1});
+  ImGui::Begin("Hotbar", nullptr,
+               ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration);
+  ImGui::Button("##", ImVec2{40, 40});
+  ImGui::SameLine(0, 4);
+  ImGui::Button("##", ImVec2{40, 40});
+  ImGui::SameLine(0, 4);
+  ImGui::Button("##", ImVec2{40, 40});
+  ImGui::SameLine(0, 4);
+  ImGui::Button("##", ImVec2{40, 40});
+  ImGui::SameLine(0, 4);
+  ImGui::Button("##", ImVec2{40, 40});
+
+  ImGui::SameLine(0, 8);
+  ImGui::Button("##", ImVec2{40, 40});
+  ImGui::SameLine(0, 4);
+  ImGui::Button("##", ImVec2{40, 40});
+  ImGui::SameLine(0, 4);
+  ImGui::Button("##", ImVec2{40, 40});
+  ImGui::SameLine(0, 4);
+  ImGui::Button("##", ImVec2{40, 40});
+  ImGui::SameLine(0, 4);
+  ImGui::Button("##", ImVec2{40, 40});
   ImGui::End();
 
   ImGui::Render();
