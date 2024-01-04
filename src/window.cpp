@@ -44,15 +44,23 @@ void Window::update(State& state)
     this->needsResize = false;
     SDL_GetWindowSize(this->window, &state.screenSize.width, &state.screenSize.height);
   }
-  this->getGui().update(state);
 }
 
 void Window::render(State& state)
 {
-  // TODO: This is a clude of responsibility
+  // GUI
+
+  ImGui_ImplSDLRenderer2_NewFrame();
+  ImGui_ImplSDL2_NewFrame();
+  ImGui::NewFrame();
+
+  this->getGui().render(state);
+
   ImGuiIO& io = ImGui::GetIO();
   ImGui::Render();
   SDL_RenderSetScale(this->renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
+
+  // Playfield
 
   SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 255);
   SDL_RenderClear(this->renderer);
@@ -61,6 +69,8 @@ void Window::render(State& state)
                    int(state.screenSize.height / 2.0f - 400 / 2.0f - state.position.y), 400, 400};
   SDL_SetRenderDrawColor(this->renderer, 255, 0, 0, 255);
   SDL_RenderFillRect(this->renderer, &rect);
+
+  // Draw GUI on top of playfield
 
   ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
   SDL_RenderPresent(this->renderer);

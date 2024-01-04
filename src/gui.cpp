@@ -26,13 +26,8 @@ Gui::~Gui()
   ImGui::DestroyContext();
 }
 
-void Gui::update(State& state)
+void Gui::render(State& state)
 {
-  // Start the Dear ImGui frame
-  ImGui_ImplSDLRenderer2_NewFrame();
-  ImGui_ImplSDL2_NewFrame();
-  ImGui::NewFrame();
-
   if (state.showDemoWindow)
     ImGui::ShowDemoWindow(&state.showDemoWindow);
 

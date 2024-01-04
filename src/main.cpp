@@ -4,9 +4,8 @@
 #include <chrono>
 #include <imgui.h>
 #include <SDL2/SDL.h>
-#include <thread>
 
-bool logic(State& state, Window& window)
+bool input(State& state, Window& window)
 {
   SDL_Event event;
   while (SDL_PollEvent(&event))
@@ -21,30 +20,53 @@ bool logic(State& state, Window& window)
     state.handleEvent(event);
   }
 
-  state.update();
-  window.update(state);
-
-  window.render(state);
-
   return false;
 }
 
-static std::chrono::nanoseconds dt = std::chrono::nanoseconds(1000000000 / 144);
+void update(State& state, Window& window)
+{
+  state.update();
+  window.update(state);
+}
+
+void render(State& state, Window& window)
+{
+  window.render(state);
+}
 
 void mainLoop(State& state, Window& window)
 {
-  using clock = std::chrono::steady_clock;
+  using Clock = std::chrono::steady_clock;
+  using namespace std::chrono_literals;
 
-  clock::time_point frameEnd;
-  while (true)
+  static Clock::time_point lastFrameTime = Clock::now();
+  static Clock::duration accumulator;
+  static constexpr std::chrono::nanoseconds timestep(1ms); // Update simulation 1000 times per second.
+
+  bool quit = false;
+  while (!quit)
   {
-    frameEnd = clock::now();
-    frameEnd += dt;
+    Clock::time_point currentTime = Clock::now();
+    Clock::duration frameTime = currentTime - lastFrameTime;
+    lastFrameTime = currentTime;
 
-    if (logic(state, window))
-      return;
+    accumulator += frameTime;
 
-    std::this_thread::sleep_until(frameEnd);
+    quit = input(state, window);
+
+    while (accumulator >= timestep)
+    {
+      update(state, window);
+      accumulator -= timestep;
+    }
+
+    render(state, window);
+
+    // Cap framerate at max simulation speed
+    Clock::duration timeToSleep = timestep - accumulator - (Clock::now() - lastFrameTime);
+    if (timeToSleep > Clock::duration::zero())
+      // sleep_for uses chrono::system_clock::now(), which is not steady, so just use regular sleep
+      usleep(std::chrono::duration_cast<std::chrono::microseconds>(timeToSleep).count());
   }
 }
 

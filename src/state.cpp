@@ -21,12 +21,12 @@ void State::handleEvent(SDL_Event& event)
 void State::update()
 {
   if (this->heldKeys[SDL_SCANCODE_W])
-    this->position.y -= 5;
+    this->position.y -= 1;
   else if (this->heldKeys[SDL_SCANCODE_S])
-    this->position.y += 5;
+    this->position.y += 1;
 
   if (this->heldKeys[SDL_SCANCODE_A])
-    this->position.x -= 5;
+    this->position.x -= 1;
   else if (this->heldKeys[SDL_SCANCODE_D])
-    this->position.x += 5;
+    this->position.x += 1;
 }
