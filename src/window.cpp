@@ -16,12 +16,9 @@ Window::Window()
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     throw std::runtime_error("Failed to initialize SDL");
 
-  this->window =
-      SDL_CreateWindow("SDL Demo", 0, 0, 1920, 1080, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+  this->window = SDL_CreateWindow("SDL Demo", 0, 0, 1920, 1080,
+                                  SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
   assert(this->window);
-
-  this->logEnv();
-  this->logDisplayInfo();
 
   this->renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
   assert(this->renderer);
@@ -81,27 +78,4 @@ void Window::handleEvent(SDL_Event& event)
   if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
     this->needsResize = true;
   this->getGui().handleEvent(event);
-}
-
-void Window::logEnv()
-{
-  printf(
-      "Environment: DISPLAY=%s WAYLAND_DISPLAY=%s DESKTOP_SESSION=%s XDG_SESSION_DESKTOP=%s XDG_CURRENT_DESKTOP=%s\n",
-      getenv("DISPLAY"), getenv("WAYLAND_DISPLAY"), getenv("DESKTOP_SESSION"), getenv("XDG_SESSION_DESKTOP"),
-      getenv("XDG_CURRENT_DESKTOP"));
-}
-
-void Window::logDisplayInfo()
-{
-  int numberOfAdapters = SDL_GetNumVideoDisplays();
-  printf("Available displays: %d\n", numberOfAdapters);
-  for (int i = 0; i < numberOfAdapters; i++)
-  {
-    SDL_Rect rect;
-    if (SDL_GetDisplayBounds(i, &rect) == 0)
-    {
-      const char* name = SDL_GetDisplayName(i);
-      printf("%s\n", name);
-    }
-  }
 }

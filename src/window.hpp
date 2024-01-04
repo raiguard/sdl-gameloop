@@ -22,9 +22,6 @@ public:
   Gui& getGui() { return *this->gui; }
 
 private:
-  void logEnv();
-  void logDisplayInfo();
-
   SDL_Window* window;
   SDL_Renderer* renderer;
 
