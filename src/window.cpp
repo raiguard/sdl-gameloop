@@ -1,4 +1,5 @@
 #include "window.hpp"
+#include "gui.hpp"
 #include "state.hpp"
 #include <cassert>
 #include <format>
@@ -8,15 +9,15 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 
-Window::Window(const char* title)
+Window::Window()
 {
   SDL_SetHint(SDL_HINT_EVENT_LOGGING, "1");
   SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11");
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     throw std::runtime_error("Failed to initialize SDL");
 
-  this->window = SDL_CreateWindow(title, 0, 0, this->getWidth(), this->getHeight(),
-                                  SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+  this->window =
+      SDL_CreateWindow("SDL Demo", 0, 0, 1920, 1080, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
   assert(this->window);
 
   this->logEnv();
@@ -25,25 +26,12 @@ Window::Window(const char* title)
   this->renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
   assert(this->renderer);
 
-  IMGUI_CHECKVERSION();
-  ImGui::CreateContext();
-  ImGuiIO& io = ImGui::GetIO();
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-
-  ImGui::StyleColorsDark();
-
-  // Setup Platform/Renderer backends
-  ImGui_ImplSDL2_InitForSDLRenderer(window, this->renderer);
-  ImGui_ImplSDLRenderer2_Init(this->renderer);
+  this->gui = new Gui(this->window, this->renderer);
 }
 
 Window::~Window()
 {
-  ImGui_ImplSDLRenderer2_Shutdown();
-  ImGui_ImplSDL2_Shutdown();
-  ImGui::DestroyContext();
-
+  delete this->gui;
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(this->window);
   SDL_Quit();
@@ -54,68 +42,23 @@ void Window::update(State& state)
   if (this->needsResize)
   {
     this->needsResize = false;
-    SDL_GetWindowSize(this->window, &this->dimensions.width, &this->dimensions.height);
+    SDL_GetWindowSize(this->window, &state.screenSize.width, &state.screenSize.height);
   }
-
-  // Start the Dear ImGui frame
-  ImGui_ImplSDLRenderer2_NewFrame();
-  ImGui_ImplSDL2_NewFrame();
-  ImGui::NewFrame();
-
-  ImGuiIO& io = ImGui::GetIO();
-
-  if (this->showDemoWindow)
-    ImGui::ShowDemoWindow(&this->showDemoWindow);
-
-  ImGui::SetNextWindowPos(ImVec2{0, 0});
-  ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings |
-                           ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBackground;
-  ImGui::Begin("Debug overlay", nullptr, flags);
-  ImGui::Text("%.1f FPS (%.3f ms/frame)", io.Framerate, 1000.0f / io.Framerate);
-  ImGui::Text("Position: (%0.1f, %0.1f)", state.position.x, state.position.y);
-  if (ImGui::Button("Show demo window"))
-    this->showDemoWindow = !this->showDemoWindow;
-  ImGui::SameLine();
-  if (ImGui::Button("Reset position"))
-    state.position = ImVec2();
-  ImGui::End();
-
-  ImGui::SetNextWindowPos(ImVec2{this->getWidth() / 2.0f, float(this->getHeight())}, true, ImVec2{0.5, 1});
-  ImGui::Begin("Hotbar", nullptr,
-               ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-
-  ImGui::SameLine(0, 8);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::SameLine(0, 4);
-  ImGui::Button("##", ImVec2{40, 40});
-  ImGui::End();
+  this->getGui().update(state);
 }
 
 void Window::render(State& state)
 {
+  // TODO: This is a clude of responsibility
   ImGuiIO& io = ImGui::GetIO();
   ImGui::Render();
   SDL_RenderSetScale(this->renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
+
   SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 255);
   SDL_RenderClear(this->renderer);
 
-  SDL_Rect rect = {int(this->getWidth() / 2.0f - 400 / 2.0f + state.position.x),
-                   int(this->getHeight() / 2.0f - 400 / 2.0f + state.position.y), 400, 400};
+  SDL_Rect rect = {int(state.screenSize.width / 2.0f - 400 / 2.0f + state.position.x),
+                   int(state.screenSize.height / 2.0f - 400 / 2.0f + state.position.y), 400, 400};
   SDL_SetRenderDrawColor(this->renderer, 255, 0, 0, 255);
   SDL_RenderFillRect(this->renderer, &rect);
 
@@ -123,12 +66,11 @@ void Window::render(State& state)
   SDL_RenderPresent(this->renderer);
 }
 
-ImGuiIO& Window::handleEvent(SDL_Event& event)
+void Window::handleEvent(SDL_Event& event)
 {
-  ImGui_ImplSDL2_ProcessEvent(&event);
   if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
     this->needsResize = true;
-  return ImGui::GetIO();
+  this->getGui().handleEvent(event);
 }
 
 void Window::logEnv()

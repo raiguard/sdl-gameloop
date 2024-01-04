@@ -5,12 +5,22 @@
 
 union SDL_Event;
 
+struct Dimensions
+{
+  Dimensions() : width(0), height(0) {}
+  Dimensions(int width, int height) : width(width), height(height) {}
+
+  int width, height;
+};
+
 struct State
 {
   void handleEvent(SDL_Event& event);
   void update();
 
+  Dimensions screenSize = {1920, 1080};
   ImVec2 position;
+  bool showDemoWindow;
 
   std::map<SDL_Scancode, bool> heldKeys = {
     {SDL_SCANCODE_W, false},
