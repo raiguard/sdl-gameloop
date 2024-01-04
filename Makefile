@@ -18,16 +18,6 @@ BINARY = $(BUILDDIR)/sdldemo
 RM = rm -rf
 MKDIR = mkdir
 
-.PHONY: all clean run
-
-all: $(BINARY)
-
-$(BUILDDIR)/:
-	$(MKDIR) -p $(BUILDDIR)
-
-$(BINARY): $(OBJECTS)
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o $(BINARY)
-
 $(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp $(SOURCEDIR)/%.hpp
 	$(CXX) $(CFLAGS) -c $< -o $@
 
@@ -36,6 +26,11 @@ $(BUILDDIR)/%.o: $(IMGUI_DIR)/%.cpp
 
 $(BUILDDIR)/%.o: $(IMGUI_DIR)/backends/%.cpp
 	$(CXX) $(CFLAGS) -c $< -o $@
+
+all: $(BINARY)
+
+$(BINARY): $(OBJECTS)
+	$(CXX) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o $(BINARY)
 
 clean:
 	$(RM) $(BINARY)
