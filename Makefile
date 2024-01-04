@@ -10,7 +10,7 @@ SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl2.cpp $(IMGUI_DIR)/backends/imgui
 OBJECTS = $(addprefix build/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
 
 CFLAGS  = -std=c++20 -g -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends `sdl2-config --cflags`
-LDFLAGS = -llua -lSDL2
+LDFLAGS = -lSDL2
 
 NAME = sdldemo
 BINARY = $(BUILDDIR)/sdldemo
