@@ -1,6 +1,6 @@
 CXX	  = /usr/bin/clang++
 CFLAGS  = -std=c++20 -g
-LDFLAGS = -llua -lSDL2 -lGL
+LDFLAGS = -llua -lSDL2
 
 BUILDDIR = build
 SOURCEDIR = src

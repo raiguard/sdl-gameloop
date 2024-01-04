@@ -30,7 +30,4 @@ private:
   Dimensions dimensions = {1920, 1080};
 
   bool needsResize = false;
-
-  // int gameControllerID;
-  // SDL_GameController* gameController;
 };
