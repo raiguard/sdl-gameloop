@@ -1,4 +1,5 @@
 #pragma once
+#include <imgui.h>
 #include <memory>
 #include <SDL2/SDL_video.h>
 #include <SDL_events.h>
@@ -16,8 +17,8 @@ class Window
 public:
   Window(const char* title);
   ~Window();
-  void draw();
-  void handleEvent(SDL_Event& event);
+  void draw(ImVec2& position);
+  ImGuiIO& handleEvent(SDL_Event& event);
   int getWidth() const { return this->dimensions.width; }
   int getHeight() const { return this->dimensions.height; }
 

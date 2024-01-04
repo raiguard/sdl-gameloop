@@ -48,7 +48,7 @@ Window::~Window()
   SDL_Quit();
 }
 
-void Window::draw()
+void Window::draw(ImVec2& position)
 {
   if (this->needsResize)
   {
@@ -66,7 +66,7 @@ void Window::draw()
   if (this->showDemoWindow)
     ImGui::ShowDemoWindow(&this->showDemoWindow);
 
-  ImGui::SetNextWindowPos(ImVec2{static_cast<float>(this->getWidth()), 0}, true, ImVec2{1, 0});
+  ImGui::SetNextWindowPos(ImVec2{0, 0});
   ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings |
                            ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBackground;
   ImGui::Begin("Debug overlay", nullptr, flags);
@@ -107,7 +107,7 @@ void Window::draw()
 
   int width = this->getWidth() / 3;
   int height = this->getHeight() / 3;
-  SDL_Rect rect = {this->getWidth() / 2 - width / 2, this->getHeight() / 2 - height / 2, width, height};
+  SDL_Rect rect = {this->getWidth() / 2 - width / 2, int(this->getHeight() / 2.0f - height / 2.0f + position.y), width, height};
   SDL_SetRenderDrawColor(this->renderer, 255, 0, 0, 255);
   SDL_RenderFillRect(this->renderer, &rect);
 
@@ -115,11 +115,12 @@ void Window::draw()
   SDL_RenderPresent(this->renderer);
 }
 
-void Window::handleEvent(SDL_Event& event)
+ImGuiIO& Window::handleEvent(SDL_Event& event)
 {
   ImGui_ImplSDL2_ProcessEvent(&event);
   if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
     this->needsResize = true;
+  return ImGui::GetIO();
 }
 
 void Window::logEnv()

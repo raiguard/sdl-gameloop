@@ -1,5 +1,6 @@
 #include "window.hpp"
 #include <chrono>
+#include <imgui.h>
 #include <SDL2/SDL.h>
 #include <thread>
 
@@ -10,6 +11,8 @@ void run(Window& window)
   SDL_Event event;
   clock::time_point frameEnd;
   clock::duration lastFrameTime;
+  ImVec2 position;
+  bool movingUp = false;
   while (true)
   {
     frameEnd = clock::now();
@@ -18,12 +21,22 @@ void run(Window& window)
 
     while (SDL_PollEvent(&event))
     {
-      window.handleEvent(event);
       if (event.type == SDL_QUIT)
         return;
+      ImGuiIO& io = window.handleEvent(event);
+      if (io.WantCaptureKeyboard)
+        continue;
+
+      if (event.type == SDL_KEYDOWN && event.key.keysym.scancode == SDL_SCANCODE_W && !movingUp)
+        movingUp = true;
+      else if (event.type == SDL_KEYUP && event.key.keysym.scancode == SDL_SCANCODE_W && movingUp)
+        movingUp = false;
     }
 
-    window.draw();
+    if (movingUp)
+      position.y -= 5;
+
+    window.draw(position);
     std::this_thread::sleep_until(frameEnd);
   }
 }
