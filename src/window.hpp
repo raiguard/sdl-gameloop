@@ -1,10 +1,12 @@
 #pragma once
-#include <imgui.h>
 #include <memory>
-#include <SDL2/SDL_video.h>
-#include <SDL_events.h>
-#include <SDL_render.h>
 #include <string_view>
+
+struct ImGuiIO;
+struct ImVec2;
+struct SDL_Renderer;
+struct SDL_Window;
+union SDL_Event;
 
 struct Dimensions
 {
