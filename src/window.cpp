@@ -34,24 +34,21 @@ Window::~Window()
   SDL_Quit();
 }
 
-void Window::update(State& state)
+void Window::draw(State& state)
 {
   if (this->needsResize)
   {
     this->needsResize = false;
-    SDL_GetWindowSize(this->window, &state.screenSize.width, &state.screenSize.height);
+    SDL_GetWindowSize(this->window, &this->width, &this->height);
   }
-}
 
-void Window::draw(State& state)
-{
   // GUI
 
   ImGui_ImplSDLRenderer2_NewFrame();
   ImGui_ImplSDL2_NewFrame();
   ImGui::NewFrame();
 
-  this->getGui().draw(state);
+  this->getGui().draw(state, *this);
 
   ImGuiIO& io = ImGui::GetIO();
   ImGui::Render();
@@ -62,8 +59,8 @@ void Window::draw(State& state)
   SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 255);
   SDL_RenderClear(this->renderer);
 
-  SDL_Rect rect = {int(state.screenSize.width / 2.0f - 400 / 2.0f - state.position.x),
-                   int(state.screenSize.height / 2.0f - 400 / 2.0f - state.position.y), 400, 400};
+  SDL_Rect rect = {int(this->getWidth() / 2.0f - 400 / 2.0f - state.position.x),
+                   int(this->getHeight() / 2.0f - 400 / 2.0f - state.position.y), 400, 400};
   SDL_SetRenderDrawColor(this->renderer, 255, 0, 0, 255);
   SDL_RenderFillRect(this->renderer, &rect);
 

@@ -26,7 +26,7 @@ Gui::~Gui()
   ImGui::DestroyContext();
 }
 
-void Gui::draw(State& state)
+void Gui::draw(State& state, Window& window)
 {
   if (state.showDemoWindow)
     ImGui::ShowDemoWindow(&state.showDemoWindow);
@@ -44,7 +44,7 @@ void Gui::draw(State& state)
     state.position = ImVec2();
   ImGui::End();
 
-  ImGui::SetNextWindowPos(ImVec2{state.screenSize.width / 2.0f, float(state.screenSize.height)}, true, ImVec2{0.5, 1});
+  ImGui::SetNextWindowPos(ImVec2{window.getWidth() / 2.0f, float(window.getHeight())}, true, ImVec2{0.5, 1});
   ImGui::Begin("Hotbar", nullptr,
                ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration);
   ImGui::Button("##", ImVec2{40, 40});

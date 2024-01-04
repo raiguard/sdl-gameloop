@@ -16,8 +16,9 @@ public:
   Window();
   ~Window();
   void handleEvent(SDL_Event& event);
-  void update(State& state);
   void draw(State& state);
+  int getWidth() { return this->width; }
+  int getHeight() { return this->height; }
 
   Gui& getGui() { return *this->gui; }
 
@@ -28,4 +29,6 @@ private:
   Gui* gui;
 
   bool needsResize = false;
+  int width = 1920;
+  int height = 1080;
 };

@@ -5,7 +5,7 @@
 #include <imgui.h>
 #include <SDL2/SDL.h>
 
-bool input(State& state, Window& window)
+bool handleEvents(State& state, Window& window)
 {
   SDL_Event event;
   while (SDL_PollEvent(&event))
@@ -21,17 +21,6 @@ bool input(State& state, Window& window)
   }
 
   return false;
-}
-
-void update(State& state, Window& window)
-{
-  state.update();
-  window.update(state);
-}
-
-void render(State& state, Window& window)
-{
-  window.draw(state);
 }
 
 void mainLoop(State& state, Window& window)
@@ -52,15 +41,15 @@ void mainLoop(State& state, Window& window)
 
     accumulator += frameTime;
 
-    quit = input(state, window);
+    quit = handleEvents(state, window);
 
     while (accumulator >= timestep)
     {
-      update(state, window);
+      state.update();
       accumulator -= timestep;
     }
 
-    render(state, window);
+    window.draw(state);
 
     // Cap framerate at max simulation speed
     Clock::duration timeToSleep = timestep - accumulator - (Clock::now() - lastFrameTime);
