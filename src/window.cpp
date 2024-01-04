@@ -14,8 +14,8 @@ Window::Window(const char* title)
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     throw std::runtime_error("Failed to initialize SDL");
 
-  this->window =
-      SDL_CreateWindow(title, 0, 0, this->getWidth(), this->getHeight(), SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+  this->window = SDL_CreateWindow(title, 0, 0, this->getWidth(), this->getHeight(),
+                                  SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
   assert(this->window);
 
   this->logEnv();
@@ -39,6 +39,11 @@ Window::Window(const char* title)
 
 Window::~Window()
 {
+  ImGui_ImplSDLRenderer2_Shutdown();
+  ImGui_ImplSDL2_Shutdown();
+  ImGui::DestroyContext();
+
+  SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(this->window);
   SDL_Quit();
 }
@@ -56,11 +61,27 @@ void Window::draw()
   ImGui_ImplSDL2_NewFrame();
   ImGui::NewFrame();
 
-  bool showDemoWindow = true;
-  ImGui::ShowDemoWindow(&showDemoWindow);
+  ImGuiIO& io = ImGui::GetIO();
+
+  ImGui::ShowDemoWindow(nullptr);
+
+  ImGui::SetNextWindowPos(ImVec2{static_cast<float>(this->getWidth()), 0}, true, ImVec2{1, 0});
+  ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings |
+                           ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBackground;
+  ImGui::Begin("Debug overlay", nullptr, flags);
+  ImGui::Text("%.1f FPS (%.3f ms/frame)", io.Framerate, 1000.0f / io.Framerate);
+  ImGui::End();
+
+  ImGui::SetNextWindowPos(ImVec2{0, 0});
+  ImGui::Begin("Main menu");
+  ImGui::Button("Singleplayer");
+  ImGui::Button("Multiplayer");
+  ImGui::Button("Map editor");
+  ImGui::Button("Settings");
+  ImGui::Button("Quit");
+  ImGui::End();
 
   ImGui::Render();
-  ImGuiIO& io = ImGui::GetIO();
   SDL_RenderSetScale(this->renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
   SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 255);
   SDL_RenderClear(this->renderer);
