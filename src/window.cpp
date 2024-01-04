@@ -57,8 +57,8 @@ void Window::render(State& state)
   SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 255);
   SDL_RenderClear(this->renderer);
 
-  SDL_Rect rect = {int(state.screenSize.width / 2.0f - 400 / 2.0f + state.position.x),
-                   int(state.screenSize.height / 2.0f - 400 / 2.0f + state.position.y), 400, 400};
+  SDL_Rect rect = {int(state.screenSize.width / 2.0f - 400 / 2.0f - state.position.x),
+                   int(state.screenSize.height / 2.0f - 400 / 2.0f - state.position.y), 400, 400};
   SDL_SetRenderDrawColor(this->renderer, 255, 0, 0, 255);
   SDL_RenderFillRect(this->renderer, &rect);
 
