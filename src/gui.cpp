@@ -30,15 +30,16 @@ void Gui::draw(State& state, Window& window)
 
   ImGuiIO& io = ImGui::GetIO();
   ImGui::Text("Render: %.1f FPS (%.3f ms/frame)", io.Framerate, 1000.0f / io.Framerate);
-  ImGui::Text("Window: %dx%d", window.getWidth(), window.getHeight());
+  if (ImGui::Checkbox("Use vsync", &window.useVsync))
+    window.updateVsync = true;
+  ImGui::Text("Resolution: %dx%d", window.getWidth(), window.getHeight());
   ImGui::Text("Position: (%0.1f, %0.1f)", state.position.x, state.position.y);
+  ImGui::Text("Counter: %lu", state.counter);
   if (ImGui::Button("Show demo window"))
     state.showDemoWindow = !state.showDemoWindow;
   ImGui::SameLine();
   if (ImGui::Button("Reset position"))
     state.position = ImVec2();
-  if (ImGui::Checkbox("Use vsync", &window.useVsync))
-    window.updateVsync = true;
 }
 
 bool Gui::handleEvent(SDL_Event& event)

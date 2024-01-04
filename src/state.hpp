@@ -13,6 +13,8 @@ struct State
   ImVec2 position;
   bool showDemoWindow = false;
 
+  uint64_t counter = 0;
+
   std::map<SDL_Scancode, bool> heldKeys = {
       {SDL_SCANCODE_W, false},
       {SDL_SCANCODE_A, false},

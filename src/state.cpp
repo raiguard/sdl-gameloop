@@ -29,4 +29,6 @@ void State::update()
     this->position.x -= 1;
   else if (this->heldKeys[SDL_SCANCODE_D])
     this->position.x += 1;
+
+  this->counter++;
 }
