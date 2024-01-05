@@ -18,6 +18,11 @@ BINARY = $(BUILDDIR)/$(NAME)
 RM = rm -rf
 MKDIR = mkdir
 
+all: $(BUILDDIR)/ $(BINARY)
+
+$(BUILDDIR)/:
+	$(MKDIR) -p $(BUILDDIR)
+
 $(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp $(SOURCEDIR)/%.hpp
 	$(CXX) $(CFLAGS) -c $< -o $@
 
@@ -26,8 +31,6 @@ $(BUILDDIR)/%.o: $(IMGUI_DIR)/%.cpp
 
 $(BUILDDIR)/%.o: $(IMGUI_DIR)/backends/%.cpp
 	$(CXX) $(CFLAGS) -c $< -o $@
-
-all: $(BINARY)
 
 $(BINARY): $(OBJECTS)
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o $(BINARY)
