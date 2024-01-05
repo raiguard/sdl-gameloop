@@ -12,8 +12,8 @@ OBJECTS = $(addprefix build/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
 CFLAGS  = -std=c++20 -g -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends `sdl2-config --cflags`
 LDFLAGS = -lSDL2
 
-NAME = sdldemo
-BINARY = $(BUILDDIR)/sdldemo
+NAME = game
+BINARY = $(BUILDDIR)/$(NAME)
 
 RM = rm -rf
 MKDIR = mkdir
