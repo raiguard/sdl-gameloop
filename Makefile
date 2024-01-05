@@ -23,7 +23,7 @@ all: $(BUILDDIR)/ $(BINARY)
 $(BUILDDIR)/:
 	$(MKDIR) -p $(BUILDDIR)
 
-$(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp $(SOURCEDIR)/%.hpp
+$(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp
 	$(CXX) $(CFLAGS) -c $< -o $@
 
 $(BUILDDIR)/%.o: $(IMGUI_DIR)/%.cpp
