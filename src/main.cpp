@@ -3,6 +3,7 @@
 #include "window.hpp"
 #include <chrono>
 #include <imgui.h>
+#include <iostream>
 #include <SDL2/SDL.h>
 
 bool handleEvents(State& state, Window& window)
@@ -51,10 +52,18 @@ void mainLoop(State& state, Window& window)
     window.draw(state);
 
     // Cap framerate at max simulation speed
-    Clock::duration timeToSleep = timestep - accumulator - (Clock::now() - lastFrameTime);
+    std::chrono::duration thisFrameTime = Clock::now() - lastFrameTime;
+    Clock::duration timeToSleep = timestep - accumulator - thisFrameTime;
     if (timeToSleep > Clock::duration::zero())
       // sleep_for uses chrono::system_clock::now(), which is not steady, so just use regular sleep
       usleep(std::chrono::duration_cast<std::chrono::microseconds>(timeToSleep).count());
+
+    // Wayland + Vsync will start lagging when on another workspace
+    static constexpr std::chrono::milliseconds maxFrameTime(50);
+    if (thisFrameTime > maxFrameTime)
+      std::cout << std::format("Taking too long! Are we on another workspace? timeToRender={}",
+                               std::chrono::duration_cast<std::chrono::milliseconds>(thisFrameTime))
+                << std::endl;
   }
 }
 
