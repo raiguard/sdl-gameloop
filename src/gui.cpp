@@ -29,6 +29,7 @@ void Gui::draw(State& state, Window& window)
     ImGui::ShowDemoWindow(&state.showDemoWindow);
 
   ImGuiIO& io = ImGui::GetIO();
+  ImGui::Begin("Debug");
   ImGui::Text("Render: %.1f FPS (%.3f ms/frame)", io.Framerate, 1000.0f / io.Framerate);
   if (ImGui::Checkbox("Use vsync", &window.useVsync))
     window.updateVsync = true;
@@ -40,6 +41,7 @@ void Gui::draw(State& state, Window& window)
   ImGui::SameLine();
   if (ImGui::Button("Reset position"))
     state.position = ImVec2();
+  ImGui::End();
 }
 
 bool Gui::handleEvent(SDL_Event& event)
