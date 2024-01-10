@@ -31,7 +31,7 @@ void mainLoop(State& state, Window& window)
 
   static Clock::time_point lastFrameTime = Clock::now();
   static Clock::duration accumulator;
-  static constexpr std::chrono::nanoseconds timestep(1ms); // Update simulation 1000 times per second.
+  static constexpr std::chrono::nanoseconds timestep(uint32_t(1000000000 / 60.0));
 
   bool quit = false;
   while (!quit)
