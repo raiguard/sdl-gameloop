@@ -5,6 +5,7 @@
 #include <imgui.h>
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <thread>
 
 bool handleEvents(State& state, Window& window)
 {
@@ -25,7 +26,7 @@ bool handleEvents(State& state, Window& window)
 
 void mainLoop(State& state, Window& window)
 {
-  using Clock = std::chrono::steady_clock;
+  using Clock = std::chrono::high_resolution_clock;
   using namespace std::chrono_literals;
 
   static Clock::time_point lastFrameTime = Clock::now();
@@ -55,8 +56,7 @@ void mainLoop(State& state, Window& window)
     std::chrono::duration thisFrameTime = Clock::now() - lastFrameTime;
     Clock::duration timeToSleep = timestep - accumulator - thisFrameTime;
     if (timeToSleep > Clock::duration::zero())
-      // sleep_for uses chrono::system_clock::now(), which is not steady, so just use regular sleep
-      usleep(std::chrono::duration_cast<std::chrono::microseconds>(timeToSleep).count());
+      std::this_thread::sleep_for(timeToSleep);
 
     // Wayland + Vsync will start lagging when on another workspace
     static constexpr std::chrono::milliseconds maxFrameTime(50);
