@@ -1,10 +1,10 @@
-#include "gui.hpp"
+#include "debuggui.hpp"
 #include "state.hpp"
 #include "window.hpp"
 #include <imgui_impl_sdl2.h>
 #include <imgui_impl_sdlrenderer2.h>
 
-Gui::Gui(SDL_Window* window, SDL_Renderer* renderer)
+DebugGui::DebugGui(SDL_Window* window, SDL_Renderer* renderer)
 {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
@@ -16,14 +16,14 @@ Gui::Gui(SDL_Window* window, SDL_Renderer* renderer)
   ImGui_ImplSDLRenderer2_Init(renderer);
 }
 
-Gui::~Gui()
+DebugGui::~DebugGui()
 {
   ImGui_ImplSDLRenderer2_Shutdown();
   ImGui_ImplSDL2_Shutdown();
   ImGui::DestroyContext();
 }
 
-void Gui::draw(State& state, Window& window)
+void DebugGui::draw(State& state, Window& window)
 {
   if (state.showDemoWindow)
     ImGui::ShowDemoWindow(&state.showDemoWindow);
@@ -44,7 +44,7 @@ void Gui::draw(State& state, Window& window)
   ImGui::End();
 }
 
-bool Gui::handleEvent(SDL_Event& event)
+bool DebugGui::handleEvent(SDL_Event& event)
 {
   ImGui_ImplSDL2_ProcessEvent(&event);
   return ImGui::GetIO().WantCaptureKeyboard;

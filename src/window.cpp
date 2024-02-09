@@ -1,5 +1,6 @@
+#include "debuggui.hpp"
+#include "widget.hpp"
 #include "window.hpp"
-#include "gui.hpp"
 #include "state.hpp"
 #include <cassert>
 #include <format>
@@ -16,13 +17,24 @@ Window::Window()
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     throw std::runtime_error("Failed to initialize SDL");
 
-  this->window = SDL_CreateWindow("SDL Demo", 0, 0, this->getWidth(), this->getHeight(),
-                                  SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-  assert(this->window);
+  this->window = SDL_CreateWindow("SDL Demo", 0, 0, 1920, 1080,
+                                  SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+  if (!this->window)
+    throw std::runtime_error(SDL_GetError());
 
-  this->renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+  this->renderer = SDL_CreateRenderer(this->window, -1, SDL_RENDERER_ACCELERATED);
   assert(this->renderer);
-  this->gui.reset(new Gui(this->window, this->renderer));
+  this->debugGui.reset(new DebugGui(this->window, this->renderer));
+
+  this->baseWidget.reset(new Widget(Widget::Position(100, 100), Widget::Color(30, 30, 30)));
+  *this->baseWidget
+    << (widget(Widget::Color(255, 0, 0), Widget::Layout::Vertical)
+      << widget(Widget::Dimensions(20, 20), Widget::Color(255, 150, 50))
+      << widget(Widget::Dimensions(20, 20), Widget::Color(255, 150, 50)))
+    << widget(Widget::Dimensions(20, 20), Widget::Color(0, 255, 0))
+    << widget(Widget::Dimensions(20, 20), Widget::Color(0, 0, 255))
+    << widget(Widget::Dimensions(20, 20), Widget::Color(0, 255, 255))
+    << widget(Widget::Dimensions(20, 20), Widget::Color(255, 0, 255));
 }
 
 Window::~Window()
@@ -46,7 +58,8 @@ void Window::draw(State& state)
   ImGui_ImplSDL2_NewFrame();
   ImGui::NewFrame();
 
-  this->getGui().draw(state, *this);
+  this->getDebugGui().draw(state, *this);
+
 
   ImGui::Render();
   ImGuiIO& io = ImGui::GetIO();
@@ -69,6 +82,9 @@ void Window::draw(State& state)
 
   // Draw GUI on top of playfield
 
+  this->baseWidget->applyLayout();
+  this->baseWidget->draw(this->renderer);
+
   ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
   SDL_RenderPresent(this->renderer);
 }
@@ -77,5 +93,5 @@ bool Window::handleEvent(SDL_Event& event)
 {
   if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
     this->needsResize = true;
-  return this->getGui().handleEvent(event);
+  return this->getDebugGui().handleEvent(event);
 }

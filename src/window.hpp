@@ -2,7 +2,8 @@
 #include <memory>
 #include <string_view>
 
-class Gui;
+class DebugGui;
+class Widget;
 struct ImGuiIO;
 struct ImVec2;
 struct SDL_Renderer;
@@ -19,7 +20,7 @@ public:
   void draw(State& state);
   int getWidth() { return this->width; }
   int getHeight() { return this->height; }
-  Gui& getGui() { return *this->gui; }
+  DebugGui& getDebugGui() { return *this->debugGui; }
 
   bool useVsync = true;
   bool updateVsync = true;
@@ -30,7 +31,8 @@ private:
   SDL_Window* window;
   SDL_Renderer* renderer;
 
-  std::unique_ptr<Gui> gui;
+  std::unique_ptr<Widget> baseWidget;
+  std::unique_ptr<DebugGui> debugGui;
 
   bool needsResize = false;
   int width = 1920;
