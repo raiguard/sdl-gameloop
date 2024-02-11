@@ -31,7 +31,7 @@ void mainLoop(State& state, Window& window)
 
   static Clock::time_point lastFrameTime = Clock::now();
   static Clock::duration accumulator;
-  static constexpr std::chrono::nanoseconds timestep(int(1000000000 / 60.0));
+  static constexpr std::chrono::nanoseconds timestep(int(1000000000 / 1000));
 
   bool quit = false;
   while (!quit)
