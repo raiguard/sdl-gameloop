@@ -3,11 +3,11 @@
 #include "window.hpp"
 #include "state.hpp"
 #include <cassert>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 #include <imgui.h>
 #include <imgui_impl_sdl2.h>
-#include <imgui_impl_sdlrenderer2.h>
-#include <SDL2/SDL.h>
-#include <thread>
+#include <imgui_impl_opengl3.h>
 
 Window::Window()
 {
@@ -17,13 +17,13 @@ Window::Window()
     throw std::runtime_error("Failed to initialize SDL");
 
   this->window = SDL_CreateWindow("SDL Demo", 0, 0, 1920, 1080,
-                                  SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+                                  SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL);
   if (!this->window)
     throw std::runtime_error(SDL_GetError());
 
-  this->renderer = SDL_CreateRenderer(this->window, -1, SDL_RENDERER_ACCELERATED);
-  assert(this->renderer);
-  this->debugGui.reset(new DebugGui(this->window, this->renderer));
+  this->context = SDL_GL_CreateContext(this->window);
+  assert(this->context);
+  this->debugGui.reset(new DebugGui(this->window, this->context));
 
   this->baseWidget.reset(new Widget(Widget::Position(100, 100), Widget::Color(30, 30, 30)));
   *this->baseWidget
@@ -38,7 +38,7 @@ Window::Window()
 
 Window::~Window()
 {
-  SDL_DestroyRenderer(this->renderer);
+  SDL_GL_DeleteContext(this->context);
   SDL_DestroyWindow(this->window);
   SDL_Quit();
 }
@@ -57,7 +57,7 @@ void Window::draw(State& state)
   // TODO: Double buffering if that is needed for repro
   // GUI
 
-  ImGui_ImplSDLRenderer2_NewFrame();
+  ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplSDL2_NewFrame();
   ImGui::NewFrame();
 
@@ -65,30 +65,26 @@ void Window::draw(State& state)
 
   ImGui::Render();
   ImGuiIO& io = ImGui::GetIO();
-  SDL_RenderSetScale(this->renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
+  // SDL_RenderSetScale(this->renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
   if (this->updateVsync)
   {
     this->updateVsync = false;
-    SDL_RenderSetVSync(this->renderer, this->useVsync);
+    SDL_GL_SetSwapInterval(this->useVsync ? 1 : 0);
   }
 
   // Playfield
 
-  SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 255);
-  SDL_RenderClear(this->renderer);
-
-  SDL_Rect rect = {int(this->getWidth() / 2.0f - 200 / 2.0f + state.position.x),
-                   int(this->getHeight() / 2.0f - 200 / 2.0f + state.position.y), 200, 200};
-  SDL_SetRenderDrawColor(this->renderer, 255, 0, 0, 255);
-  SDL_RenderFillRect(this->renderer, &rect);
+  glViewport(0, 0, this->getHeight(), this->getWidth());
+  glClearColor(0.f, 0.f, 0.f, 0.f);
+  glClear(GL_COLOR_BUFFER_BIT);
 
   // Draw GUI on top of playfield
 
   this->baseWidget->applyLayout();
-  this->baseWidget->draw(this->renderer);
+  // this->baseWidget->draw(this->renderer);
 
-  ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
-  SDL_RenderPresent(this->renderer);
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+  SDL_GL_SwapWindow(this->window);
 }
 
 bool Window::handleEvent(SDL_Event& event)

@@ -1,5 +1,4 @@
 #include <memory>
-#include <optional>
 #include <vector>
 
 struct SDL_Renderer;
@@ -9,7 +8,7 @@ struct WidgetPtr: std::shared_ptr<Widget>
 {
   using Super = std::shared_ptr<Widget>;
 public:
-  WidgetPtr(Super self) : Super(self) {}
+  WidgetPtr(Super&& self) : Super(self) {}
   virtual WidgetPtr& operator<<(std::shared_ptr<Widget> other);
 };
 

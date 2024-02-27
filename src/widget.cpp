@@ -1,7 +1,5 @@
 #include "widget.hpp"
 #include <SDL_rect.h>
-#include <SDL_render.h>
-#include <format>
 #include <imgui.h>
 
 WidgetPtr& WidgetPtr::operator<<(std::shared_ptr<Widget> other)
@@ -55,10 +53,10 @@ void Widget::applyLayout()
 
 void Widget::draw(SDL_Renderer* renderer) const
 {
-  SDL_SetRenderDrawColor(renderer, this->color.r, this->color.g, this->color.b, this->color.a);
-  SDL_Rect rect = {this->position.x, this->position.y, this->dimensions.w, this->dimensions.h};
-  SDL_RenderFillRect(renderer, &rect);
+  // SDL_SetRenderDrawColor(renderer, this->color.r, this->color.g, this->color.b, this->color.a);
+  // SDL_Rect rect = {this->position.x, this->position.y, this->dimensions.w, this->dimensions.h};
+  // SDL_RenderFillRect(renderer, &rect);
 
-  for (auto& child : this->children)
-    child->draw(renderer);
+  // for (auto& child : this->children)
+  //   child->draw(renderer);
 }

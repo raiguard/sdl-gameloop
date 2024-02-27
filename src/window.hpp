@@ -1,11 +1,11 @@
 #pragma once
 #include <memory>
+#include <SDL2/SDL.h>
 
 class DebugGui;
 class Widget;
 struct ImGuiIO;
 struct ImVec2;
-struct SDL_Renderer;
 struct SDL_Window;
 struct State;
 union SDL_Event;
@@ -29,7 +29,7 @@ private:
   void init();
 
   SDL_Window* window;
-  SDL_Renderer* renderer;
+  SDL_GLContext context;
 
   std::unique_ptr<Widget> baseWidget;
   std::unique_ptr<DebugGui> debugGui;

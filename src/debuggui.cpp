@@ -1,10 +1,12 @@
 #include "debuggui.hpp"
 #include "state.hpp"
 #include "window.hpp"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 #include <imgui_impl_sdl2.h>
-#include <imgui_impl_sdlrenderer2.h>
+#include <imgui_impl_opengl3.h>
 
-DebugGui::DebugGui(SDL_Window* window, SDL_Renderer* renderer)
+DebugGui::DebugGui(SDL_Window* window, SDL_GLContext context)
 {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
@@ -12,13 +14,13 @@ DebugGui::DebugGui(SDL_Window* window, SDL_Renderer* renderer)
   ImGui::StyleColorsDark();
 
   // Setup Platform/Renderer backends
-  ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
-  ImGui_ImplSDLRenderer2_Init(renderer);
+  ImGui_ImplSDL2_InitForOpenGL(window, context);
+  ImGui_ImplOpenGL3_Init();
 }
 
 DebugGui::~DebugGui()
 {
-  ImGui_ImplSDLRenderer2_Shutdown();
+  ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplSDL2_Shutdown();
   ImGui::DestroyContext();
 }
