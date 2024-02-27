@@ -3,12 +3,11 @@
 #include "window.hpp"
 #include "state.hpp"
 #include <cassert>
-#include <format>
 #include <imgui.h>
 #include <imgui_impl_sdl2.h>
 #include <imgui_impl_sdlrenderer2.h>
-#include <iostream>
 #include <SDL2/SDL.h>
+#include <thread>
 
 Window::Window()
 {
