@@ -37,4 +37,12 @@ private:
   bool needsResize = false;
   int width = 1920;
   int height = 1080;
+
+  uint32_t buffer;
+
+  float positions[6] = {
+    -0.5f, -0.5f,
+    0.0f, 0.5f,
+    0.5f, -0.5f,
+  };
 };

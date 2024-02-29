@@ -3,12 +3,13 @@
 #include "window.hpp"
 #include "state.hpp"
 #include <cassert>
-// #include <glad/glad.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
+#include <format>
+#include <glad/glad.h>
 #include <imgui.h>
 #include <imgui_impl_sdl2.h>
 #include <imgui_impl_opengl3.h>
+#include <iostream>
 #include <thread>
 
 Window::Window()
@@ -18,6 +19,9 @@ Window::Window()
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     throw std::runtime_error("Failed to initialize SDL");
 
+  SDL_GL_LoadLibrary(nullptr);
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
   this->window = SDL_CreateWindow("SDL Demo", 0, 0, 1920, 1080,
                                   SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL);
   if (!this->window)
@@ -26,6 +30,16 @@ Window::Window()
   this->context = SDL_GL_CreateContext(this->window);
   assert(this->context);
   this->debugGui.reset(new DebugGui(this->window, this->context));
+
+  gladLoadGLLoader(SDL_GL_GetProcAddress);
+  std::cout << std::format("OpenGL version: {}", (const char*)(glGetString(GL_VERSION))) << std::endl;
+
+  glGenBuffers(1, &this->buffer);
+  glBindBuffer(GL_ARRAY_BUFFER, this->buffer);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(this->positions), this->positions, GL_STATIC_DRAW);
+
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
   this->baseWidget.reset(new Widget(Widget::Position(100, 100), Widget::Color(30, 30, 30)));
   *this->baseWidget
@@ -56,7 +70,6 @@ void Window::prepare()
 
 void Window::draw(State& state)
 {
-  // TODO: Double buffering if that is needed for repro
   // GUI
 
   ImGui_ImplOpenGL3_NewFrame();
@@ -75,9 +88,9 @@ void Window::draw(State& state)
 
   // Playfield
 
-  glViewport(0, 0, this->getHeight(), this->getWidth());
-  glClearColor(1.f, 0.f, 0.f, 0.f);
+  glViewport(0, 0, this->getWidth(), this->getHeight());
   glClear(GL_COLOR_BUFFER_BIT);
+  glDrawArrays(GL_TRIANGLES, 0, 3);
 
   // Draw GUI on top of playfield
 
