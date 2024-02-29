@@ -3,11 +3,13 @@
 #include "window.hpp"
 #include "state.hpp"
 #include <cassert>
+// #include <glad/glad.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <imgui.h>
 #include <imgui_impl_sdl2.h>
 #include <imgui_impl_opengl3.h>
+#include <thread>
 
 Window::Window()
 {
@@ -65,7 +67,6 @@ void Window::draw(State& state)
 
   ImGui::Render();
   ImGuiIO& io = ImGui::GetIO();
-  // SDL_RenderSetScale(this->renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
   if (this->updateVsync)
   {
     this->updateVsync = false;
@@ -75,7 +76,7 @@ void Window::draw(State& state)
   // Playfield
 
   glViewport(0, 0, this->getHeight(), this->getWidth());
-  glClearColor(0.f, 0.f, 0.f, 0.f);
+  glClearColor(1.f, 0.f, 0.f, 0.f);
   glClear(GL_COLOR_BUFFER_BIT);
 
   // Draw GUI on top of playfield
@@ -84,6 +85,7 @@ void Window::draw(State& state)
   // this->baseWidget->draw(this->renderer);
 
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+  std::this_thread::sleep_for(std::chrono::milliseconds(2));
   SDL_GL_SwapWindow(this->window);
 }
 

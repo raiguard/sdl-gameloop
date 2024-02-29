@@ -1,6 +1,5 @@
 #pragma once
 #include <SDL_video.h>
-#include <SDL2/SDL_opengl.h>
 
 class Window;
 struct ImGuiIO;
