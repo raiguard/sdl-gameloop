@@ -43,14 +43,18 @@ Window::~Window()
   SDL_Quit();
 }
 
-void Window::draw(State& state)
+void Window::prepare()
 {
   if (this->needsResize)
   {
     this->needsResize = false;
     SDL_GetWindowSize(this->window, &this->width, &this->height);
   }
+}
 
+void Window::draw(State& state)
+{
+  // TODO: Double buffering if that is needed for repro
   // GUI
 
   ImGui_ImplSDLRenderer2_NewFrame();
@@ -58,7 +62,6 @@ void Window::draw(State& state)
   ImGui::NewFrame();
 
   this->getDebugGui().draw(state, *this);
-
 
   ImGui::Render();
   ImGuiIO& io = ImGui::GetIO();
