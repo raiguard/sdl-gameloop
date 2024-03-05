@@ -40,6 +40,8 @@ private:
 
   uint32_t buffer;
 
+  uint32_t triangleShader;
+
   float positions[6] = {
     -0.5f, -0.5f,
     0.0f, 0.5f,

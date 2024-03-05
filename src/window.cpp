@@ -1,4 +1,5 @@
 #include "debuggui.hpp"
+#include "graphics.hpp"
 #include "widget.hpp"
 #include "window.hpp"
 #include "state.hpp"
@@ -41,6 +42,31 @@ Window::Window()
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
+  std::string vertexShader = R"(
+    #version 420 core
+
+    layout(location = 0) in vec4 position;
+
+    void main()
+    {
+      gl_Position = position;
+    }
+  )";
+
+  std::string fragmentShader = R"(
+    #version 420 core
+
+    layout(location = 0) out vec4 color;
+
+    void main()
+    {
+      color = vec4(1.0, 0.0, 0.0, 1.0);
+    }
+  )";
+
+  this->triangleShader = Graphics::createShader(vertexShader, fragmentShader);
+  glUseProgram(this->triangleShader);
+
   this->baseWidget.reset(new Widget(Widget::Position(100, 100), Widget::Color(30, 30, 30)));
   *this->baseWidget
     << (widget(Widget::Color(255, 0, 0), Widget::Layout::Vertical)
@@ -54,6 +80,7 @@ Window::Window()
 
 Window::~Window()
 {
+  glDeleteProgram(this->triangleShader);
   SDL_GL_DeleteContext(this->context);
   SDL_DestroyWindow(this->window);
   SDL_Quit();
@@ -64,7 +91,7 @@ void Window::prepare()
   if (this->needsResize)
   {
     this->needsResize = false;
-    SDL_GetWindowSize(this->window, &this->width, &this->height);
+    SDL_GetWindowSizeInPixels(this->window, &this->width, &this->height);
   }
 }
 
