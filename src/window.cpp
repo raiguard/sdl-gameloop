@@ -41,29 +41,7 @@ Window::Window()
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
-  std::string vertexShader = R"(
-    #version 420 core
-
-    layout(location = 0) in vec4 position;
-
-    void main()
-    {
-      gl_Position = position;
-    }
-  )";
-
-  std::string fragmentShader = R"(
-    #version 420 core
-
-    layout(location = 0) out vec4 color;
-
-    void main()
-    {
-      color = vec4(1.0, 0.0, 0.0, 1.0);
-    }
-  )";
-
-  this->triangleShader = Graphics::createShader(vertexShader, fragmentShader);
+  this->triangleShader = Graphics::createShader("triangle");
   glUseProgram(this->triangleShader);
 }
 
