@@ -75,3 +75,13 @@ inline WidgetPtr widget(Widget::Dimensions dimensions, Widget::Color color, Widg
 {
   return WidgetPtr(std::make_shared<Widget>(dimensions, color, layout));
 }
+
+// this->baseWidget.reset(new Widget(Widget::Position(100, 100), Widget::Color(30, 30, 30)));
+// *this->baseWidget
+//   << (widget(Widget::Color(255, 0, 0), Widget::Layout::Vertical)
+//     << widget(Widget::Dimensions(20, 20), Widget::Color(255, 150, 50))
+//     << widget(Widget::Dimensions(20, 20), Widget::Color(255, 150, 50)))
+//   << widget(Widget::Dimensions(20, 20), Widget::Color(0, 255, 0))
+//   << widget(Widget::Dimensions(20, 20), Widget::Color(0, 0, 255))
+//   << widget(Widget::Dimensions(20, 20), Widget::Color(0, 255, 255))
+//   << widget(Widget::Dimensions(20, 20), Widget::Color(255, 0, 255));

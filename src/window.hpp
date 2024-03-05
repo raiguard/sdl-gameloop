@@ -3,7 +3,6 @@
 #include <SDL2/SDL.h>
 
 class DebugGui;
-class Widget;
 struct ImGuiIO;
 struct ImVec2;
 struct SDL_Window;
@@ -30,7 +29,6 @@ private:
   SDL_Window* window;
   SDL_GLContext context;
 
-  std::unique_ptr<Widget> baseWidget;
   std::unique_ptr<DebugGui> debugGui;
 
   bool needsResize = false;

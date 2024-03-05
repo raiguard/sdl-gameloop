@@ -1,6 +1,5 @@
 #include "debuggui.hpp"
 #include "graphics.hpp"
-#include "widget.hpp"
 #include "window.hpp"
 #include "state.hpp"
 #include <cassert>
@@ -66,16 +65,6 @@ Window::Window()
 
   this->triangleShader = Graphics::createShader(vertexShader, fragmentShader);
   glUseProgram(this->triangleShader);
-
-  this->baseWidget.reset(new Widget(Widget::Position(100, 100), Widget::Color(30, 30, 30)));
-  *this->baseWidget
-    << (widget(Widget::Color(255, 0, 0), Widget::Layout::Vertical)
-      << widget(Widget::Dimensions(20, 20), Widget::Color(255, 150, 50))
-      << widget(Widget::Dimensions(20, 20), Widget::Color(255, 150, 50)))
-    << widget(Widget::Dimensions(20, 20), Widget::Color(0, 255, 0))
-    << widget(Widget::Dimensions(20, 20), Widget::Color(0, 0, 255))
-    << widget(Widget::Dimensions(20, 20), Widget::Color(0, 255, 255))
-    << widget(Widget::Dimensions(20, 20), Widget::Color(255, 0, 255));
 }
 
 Window::~Window()
@@ -117,9 +106,6 @@ void Window::draw(State& state)
   glDrawArrays(GL_TRIANGLES, 0, 3);
 
   // Draw GUI on top of playfield
-
-  this->baseWidget->applyLayout();
-  // this->baseWidget->draw(this->renderer);
 
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
   std::this_thread::sleep_for(std::chrono::milliseconds(2));
