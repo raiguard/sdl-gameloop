@@ -1,26 +1,20 @@
 #include "debuggui.hpp"
 #include "state.hpp"
 #include "window.hpp"
-#include "worker.hpp"
 #include <chrono>
 #include <imgui.h>
 #include <SDL2/SDL.h>
-#include <mutex>
 #include <thread>
 
-enum class ProcessResult
-{
-  Success,
-  Quit,
-};
+typedef bool ShouldQuit;
 
-ProcessResult handleEvents(State& state, Window& window)
+ShouldQuit handleEvents(State& state, Window& window)
 {
   SDL_Event event;
   while (SDL_PollEvent(&event))
   {
     if (event.type == SDL_QUIT)
-      return ProcessResult::Quit;
+      return true;
 
     if (window.handleEvent(event))
       continue;
@@ -28,22 +22,17 @@ ProcessResult handleEvents(State& state, Window& window)
     state.handleEvent(event);
   }
 
-  return ProcessResult::Success;
+  return false;
 }
 
-std::mutex updateMutex;
-std::atomic<bool> didUpdate(false);
-
-void updateLoop(State& state)
+ShouldQuit mainLoopStep(State& state, Window& window)
 {
-  std::unique_lock<std::mutex> lock(updateMutex);
-
   using Clock = std::chrono::high_resolution_clock;
   using namespace std::chrono_literals;
 
   static Clock::time_point lastFrameTime = Clock::now();
   static Clock::duration accumulator;
-  static constexpr std::chrono::nanoseconds timestep(int(1000000000 / 60));
+  static constexpr std::chrono::nanoseconds timestep(int(1000000000 / 1000));
 
   Clock::time_point currentTime = Clock::now();
   Clock::duration frameTime = currentTime - lastFrameTime;
@@ -51,63 +40,34 @@ void updateLoop(State& state)
 
   accumulator += frameTime;
 
+  if (handleEvents(state, window))
+    return true;
+
   while (accumulator >= timestep)
   {
     state.update();
-    std::this_thread::sleep_for(std::chrono::milliseconds(2)); // Simulate load
     accumulator -= timestep;
-    didUpdate = true;
   }
 
-  // // Cap framerate at max simulation speed
-  // std::chrono::duration thisFrameTime = Clock::now() - lastFrameTime;
-  // Clock::duration timeToSleep = timestep - accumulator - thisFrameTime;
-  // if (timeToSleep > Clock::duration::zero())
-  //   std::this_thread::sleep_for(timeToSleep);
-}
+  window.draw(state);
 
-ProcessResult mainLoopStep(Worker& updateWorker, State& state, Window& window)
-{
-  {
-    ProcessResult result = handleEvents(state, window);
-    if (result != ProcessResult::Success)
-      return result;
-  }
+  // Cap framerate at max simulation speed
+  std::chrono::duration thisFrameTime = Clock::now() - lastFrameTime;
+  Clock::duration timeToSleep = timestep - accumulator - thisFrameTime;
+  if (timeToSleep > Clock::duration::zero())
+    std::this_thread::sleep_for(timeToSleep);
 
-  bool didPrepare = false;
-  if (didUpdate)
-  {
-    window.prepare();
-    didPrepare = true;
-    didUpdate = false;
-  }
-
-  updateWorker.run([&] { updateLoop(state); });
-
-  // Only render if we did a prepare
-  if (didPrepare)
-  {
-    std::this_thread::sleep_for(std::chrono::milliseconds(2)); // Simulate load
-    window.draw(state);
-  }
-  else
-    // We are in the state that rendering has finished and the updateThread from the previous loop did not do an update, because it was too soon
-    // this means there is nothing to do until the next game update, so it usualy safe to sleep
-    // depending on how much we sleep here for, this will cause some jitter
-    std::this_thread::sleep_for(std::chrono::microseconds(500));
-
-  return ProcessResult::Success;
+  return false;
 }
 
 int main(int argc, char** argv)
 {
   State state;
   Window window;
-  Worker updateWorker;
 
-  ProcessResult result = ProcessResult::Success;
-  while (result == ProcessResult::Success)
-    result = mainLoopStep(updateWorker, state, window);
+  ShouldQuit quit = false;
+  while (!quit)
+    quit = mainLoopStep(state, window);
 
   return 0;
 }

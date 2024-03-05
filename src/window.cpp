@@ -86,17 +86,14 @@ Window::~Window()
   SDL_Quit();
 }
 
-void Window::prepare()
+void Window::draw(State& state)
 {
   if (this->needsResize)
   {
     this->needsResize = false;
     SDL_GetWindowSizeInPixels(this->window, &this->width, &this->height);
   }
-}
 
-void Window::draw(State& state)
-{
   // GUI
 
   ImGui_ImplOpenGL3_NewFrame();

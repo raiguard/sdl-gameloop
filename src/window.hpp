@@ -16,7 +16,6 @@ public:
   Window();
   ~Window();
   bool handleEvent(SDL_Event& event);
-  void prepare();
   void draw(State& state);
   int getWidth() { return this->width; }
   int getHeight() { return this->height; }
