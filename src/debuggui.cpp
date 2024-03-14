@@ -1,3 +1,4 @@
+#include "clipboardtest.hpp"
 #include "debuggui.hpp"
 #include "state.hpp"
 #include "window.hpp"
@@ -46,6 +47,13 @@ void DebugGui::draw(State& state, Window& window)
   ImGui::SameLine();
   if (ImGui::Button("Reset position"))
     state.position = ImVec2();
+
+  // SDL clipboard testing
+  if (ImGui::Button("Copy to clipboard"))
+    ClipboardTest::copy();
+  if (ImGui::Button("Paste from clipboard"))
+    ClipboardTest::paste();
+
   ImGui::End();
 }
 
