@@ -22,7 +22,7 @@ Window::Window()
   SDL_GL_LoadLibrary(nullptr);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-  this->window = SDL_CreateWindow("SDL Demo", 0, 0, 1920, 1080,
+  this->window = SDL_CreateWindow("SDL Demo", 0, 0, 1280, 720,
                                   SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL);
   if (!this->window)
     throw std::runtime_error(SDL_GetError());
@@ -86,7 +86,6 @@ void Window::draw(State& state)
   // Draw GUI on top of playfield
 
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-  std::this_thread::sleep_for(std::chrono::milliseconds(2));
   SDL_GL_SwapWindow(this->window);
 }
 
@@ -95,4 +94,11 @@ bool Window::handleEvent(SDL_Event& event)
   if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
     this->needsResize = true;
   return this->getDebugGui().handleEvent(event);
+}
+
+std::pair<int, int> Window::getScaledSize() const
+{
+  int width, height;
+  SDL_GetWindowSize(this->window, &width, &height);
+  return {width, height};
 }

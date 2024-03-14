@@ -35,7 +35,10 @@ void DebugGui::draw(State& state, Window& window)
   ImGui::Text("Render: %.1f FPS (%.3f ms/frame)", io.Framerate, 1000.0f / io.Framerate);
   if (ImGui::Checkbox("Use vsync", &window.useVsync))
     window.updateVsync = true;
-  ImGui::Text("Resolution: %dx%d", window.getWidth(), window.getHeight());
+  ImGui::Text("True resolution: %dx%d", window.getWidth(), window.getHeight());
+  auto scaledSize = window.getScaledSize();
+  ImGui::Text("Scaled resolution: %dx%d", scaledSize.first, scaledSize.second);
+  ImGui::Text("Display density: %fx", double(window.getWidth()) / scaledSize.first);
   ImGui::Text("Position: (%0.1f, %0.1f)", state.position.x, state.position.y);
   ImGui::Text("Counter: %lu", state.counter);
   if (ImGui::Button("Show demo window"))

@@ -16,9 +16,10 @@ public:
   ~Window();
   bool handleEvent(SDL_Event& event);
   void draw(State& state);
-  int getWidth() { return this->width; }
-  int getHeight() { return this->height; }
-  DebugGui& getDebugGui() { return *this->debugGui; }
+  int getWidth() const { return this->width; }
+  int getHeight() const { return this->height; }
+  std::pair<int, int> getScaledSize() const;
+  DebugGui& getDebugGui() const { return *this->debugGui; }
 
   bool useVsync = true;
   bool updateVsync = true;
