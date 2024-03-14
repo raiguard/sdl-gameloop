@@ -39,9 +39,13 @@ private:
 
   uint32_t triangleShader;
 
-  float positions[6] = {
+  float positions[12] = {
     -0.5f, -0.5f,
-    0.0f, 0.5f,
     0.5f, -0.5f,
+    0.5f, 0.5f,
+
+    0.5f, 0.5f,
+    -0.5f, 0.5f,
+    -0.5f, -0.5f,
   };
 };

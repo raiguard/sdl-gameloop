@@ -81,7 +81,7 @@ void Window::draw(State& state)
 
   glViewport(0, 0, this->getWidth(), this->getHeight());
   glClear(GL_COLOR_BUFFER_BIT);
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
 
   // Draw GUI on top of playfield
 
