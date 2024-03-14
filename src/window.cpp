@@ -3,27 +3,26 @@
 #include "window.hpp"
 #include "state.hpp"
 #include <cassert>
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <format>
 #include <glad/glad.h>
 #include <imgui.h>
-#include <imgui_impl_sdl2.h>
+#include <imgui_impl_sdl3.h>
 #include <imgui_impl_opengl3.h>
 #include <iostream>
-#include <thread>
 
 Window::Window()
 {
   SDL_SetHint(SDL_HINT_EVENT_LOGGING, "1");
-  SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11");
-  if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+  SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "wayland,x11");
+  if (SDL_Init(SDL_INIT_EVENTS | SDL_INIT_VIDEO) < 0)
     throw std::runtime_error("Failed to initialize SDL");
 
   SDL_GL_LoadLibrary(nullptr);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-  this->window = SDL_CreateWindow("SDL Demo", 0, 0, 1280, 720,
-                                  SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL);
+  this->window = SDL_CreateWindow("SDL Demo", 1920, 1080,
+                                  SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_OPENGL);
   if (!this->window)
     throw std::runtime_error(SDL_GetError());
 
@@ -64,7 +63,7 @@ void Window::draw(State& state)
   // GUI
 
   ImGui_ImplOpenGL3_NewFrame();
-  ImGui_ImplSDL2_NewFrame();
+  ImGui_ImplSDL3_NewFrame();
   ImGui::NewFrame();
 
   this->getDebugGui().draw(state, *this);
@@ -91,7 +90,7 @@ void Window::draw(State& state)
 
 bool Window::handleEvent(SDL_Event& event)
 {
-  if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
+  if (event.type == SDL_EVENT_WINDOW_RESIZED)
     this->needsResize = true;
   return this->getDebugGui().handleEvent(event);
 }

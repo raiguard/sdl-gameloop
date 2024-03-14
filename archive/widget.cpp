@@ -1,5 +1,5 @@
 #include "widget.hpp"
-#include <SDL_rect.h>
+#include <SDL3/SDL_rect.h>
 #include <imgui.h>
 
 WidgetPtr& WidgetPtr::operator<<(std::shared_ptr<Widget> other)

@@ -7,12 +7,12 @@ IMGUI_DIR = lib/imgui
 GLAD = lib/glad/src/glad.c
 SOURCES = $(wildcard $(SOURCEDIR)/*.cpp)
 SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
-SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl2.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
+SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl3.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
 SOURCES += $(GLAD)
 OBJECTS = $(addprefix build/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
 
-CFLAGS  = -std=c++20 -g -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -Ilib/glad/include `sdl2-config --cflags`
-LDFLAGS = `sdl2-config --libs`
+CFLAGS  = -std=c++20 -g -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -Ilib/glad/include `pkg-config --cflags sdl3` -DSDL_FUNCTION_POINTER_IS_VOID_POINTER
+LDFLAGS = `pkg-config --libs sdl3`
 
 NAME = game
 BINARY = $(BUILDDIR)/$(NAME)

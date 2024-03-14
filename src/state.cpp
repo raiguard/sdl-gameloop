@@ -1,18 +1,18 @@
 #include "state.hpp"
 #include <map>
-#include <SDL_events.h>
-#include <SDL_scancode.h>
+#include <SDL3/SDL_events.h>
+#include <SDL3/SDL_scancode.h>
 
 void State::handleEvent(SDL_Event& event)
 {
-  if (event.type != SDL_KEYDOWN && event.type != SDL_KEYUP)
+  if (event.type != SDLK_DOWN && event.type != SDLK_UP)
     return;
 
   SDL_Scancode& sc = event.key.keysym.scancode;
   if (!this->heldKeys.contains(sc))
     return;
 
-  this->heldKeys[sc] = event.type == SDL_KEYDOWN;
+  this->heldKeys[sc] = event.type == SDLK_DOWN;
 }
 
 void State::update()

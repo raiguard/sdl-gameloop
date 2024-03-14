@@ -3,7 +3,7 @@
 #include "window.hpp"
 #include <chrono>
 #include <imgui.h>
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <thread>
 
 typedef bool ShouldQuit;
@@ -13,7 +13,7 @@ ShouldQuit handleEvents(State& state, Window& window)
   SDL_Event event;
   while (SDL_PollEvent(&event))
   {
-    if (event.type == SDL_QUIT)
+    if (event.type == SDL_EVENT_QUIT)
       return true;
 
     if (window.handleEvent(event))

@@ -1,7 +1,7 @@
 #pragma once
 #include <imgui.h>
 #include <map>
-#include <SDL_scancode.h>
+#include <SDL3/SDL_scancode.h>
 
 union SDL_Event;
 

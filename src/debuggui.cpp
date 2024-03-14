@@ -1,9 +1,9 @@
 #include "debuggui.hpp"
 #include "state.hpp"
 #include "window.hpp"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-#include <imgui_impl_sdl2.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_opengl.h>
+#include <imgui_impl_sdl3.h>
 #include <imgui_impl_opengl3.h>
 
 DebugGui::DebugGui(SDL_Window* window, SDL_GLContext context)
@@ -14,14 +14,14 @@ DebugGui::DebugGui(SDL_Window* window, SDL_GLContext context)
   ImGui::StyleColorsDark();
 
   // Setup Platform/Renderer backends
-  ImGui_ImplSDL2_InitForOpenGL(window, context);
+  ImGui_ImplSDL3_InitForOpenGL(window, context);
   ImGui_ImplOpenGL3_Init();
 }
 
 DebugGui::~DebugGui()
 {
   ImGui_ImplOpenGL3_Shutdown();
-  ImGui_ImplSDL2_Shutdown();
+  ImGui_ImplSDL3_Shutdown();
   ImGui::DestroyContext();
 }
 
@@ -51,6 +51,6 @@ void DebugGui::draw(State& state, Window& window)
 
 bool DebugGui::handleEvent(SDL_Event& event)
 {
-  ImGui_ImplSDL2_ProcessEvent(&event);
+  ImGui_ImplSDL3_ProcessEvent(&event);
   return ImGui::GetIO().WantCaptureKeyboard;
 }
