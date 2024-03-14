@@ -12,7 +12,7 @@ SOURCES += $(GLAD)
 OBJECTS = $(addprefix build/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
 
 CFLAGS  = -std=c++20 -g -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -Ilib/glad/include `sdl2-config --cflags`
-LDFLAGS = -lSDL2 -lGL
+LDFLAGS = `sdl2-config --libs`
 
 NAME = game
 BINARY = $(BUILDDIR)/$(NAME)
