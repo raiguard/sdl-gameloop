@@ -2,8 +2,8 @@
 #include <format>
 #include <fstream>
 #include <iostream>
-#include <SDL_clipboard.h>
-#include <SDL_error.h>
+#include <SDL3/SDL_clipboard.h>
+#include <SDL3/SDL_error.h>
 
 namespace ClipboardTest
 {

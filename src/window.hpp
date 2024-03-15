@@ -15,7 +15,7 @@ public:
   Window();
   ~Window();
   bool handleEvent(SDL_Event& event);
-  void draw(State& state);
+  void render(State& state);
   int getWidth() const { return this->width; }
   int getHeight() const { return this->height; }
   std::pair<int, int> getScaledSize() const;
@@ -23,6 +23,7 @@ public:
 
   bool useVsync = true;
   bool updateVsync = true;
+  bool occluded = false;
 
 private:
   void init();

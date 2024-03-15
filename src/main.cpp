@@ -49,7 +49,7 @@ ShouldQuit mainLoopStep(State& state, Window& window)
     accumulator -= timestep;
   }
 
-  window.draw(state);
+  window.render(state);
 
   // Cap framerate at max simulation speed
   std::chrono::duration thisFrameTime = Clock::now() - lastFrameTime;

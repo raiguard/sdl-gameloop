@@ -52,8 +52,11 @@ Window::~Window()
   SDL_Quit();
 }
 
-void Window::draw(State& state)
+void Window::render(State& state)
 {
+  if (this->occluded)
+    return;
+
   if (this->needsResize)
   {
     this->needsResize = false;
@@ -92,6 +95,10 @@ bool Window::handleEvent(SDL_Event& event)
 {
   if (event.type == SDL_EVENT_WINDOW_RESIZED)
     this->needsResize = true;
+  else if (event.type == SDL_EVENT_WINDOW_OCCLUDED)
+    this->occluded = true;
+  else if (event.type == SDL_EVENT_WINDOW_EXPOSED)
+    this->occluded = false;
   return this->getDebugGui().handleEvent(event);
 }
 
