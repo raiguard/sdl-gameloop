@@ -1,10 +1,8 @@
-build
 .cache
 .clangd/*
-compile_commands.json
 imgui.ini
-lib/glad
-huge-blueprint.txt
+
 # Meson
+build
 subprojects/**/*
 !subprojects/*.wrap
