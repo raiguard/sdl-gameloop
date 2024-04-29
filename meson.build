@@ -13,4 +13,5 @@ sources = c.stdout().strip().split('\n')
 executable('game', sources,
            link_with: glad,
            include_directories: glad_includes,
-           dependencies: [sdl2, imgui])
+           dependencies: [sdl2, imgui],
+           cpp_args: '-Werror')

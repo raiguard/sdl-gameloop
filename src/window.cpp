@@ -69,7 +69,6 @@ void Window::draw(State& state)
   this->getDebugGui().draw(state, *this);
 
   ImGui::Render();
-  // ImGuiIO& io = ImGui::GetIO();
   if (this->updateVsync)
   {
     this->updateVsync = false;

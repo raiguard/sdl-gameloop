@@ -40,9 +40,11 @@ uint32_t Graphics::compileShader(uint32_t type, const std::string& filename)
   {
     int length;
     glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-    char message[length];
-    glGetShaderInfoLog(id, length, &length, message);
+    std::string message;
+    message.resize(length);
+    glGetShaderInfoLog(id, length, &length, message.data());
     std::cout << std::format("Failed to compile shader {}:\n\t", filename) << message << std::endl;
+    exit(-1);
   }
 
   return id;
