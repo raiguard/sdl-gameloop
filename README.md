@@ -4,9 +4,10 @@ Just a small demo of a simple SDL game loop that I made.
 
 ## Building and running
 
-Requires [SDL2](https://www.libsdl.org/) and a local install of [Glad](https://glad.dav1d.de/).
+Requires [meson](https://mesonbuild.com/) and [ninja](https://ninja-build.org/).
 
 ```
-make
-make run
+meson setup build
+meson compile -C build
+./build/game
 ```

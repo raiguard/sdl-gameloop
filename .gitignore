@@ -5,3 +5,6 @@ compile_commands.json
 imgui.ini
 lib/glad
 huge-blueprint.txt
+# Meson
+subprojects/**/*
+!subprojects/*.wrap

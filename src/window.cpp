@@ -3,14 +3,13 @@
 #include "window.hpp"
 #include "state.hpp"
 #include <cassert>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <format>
 #include <glad/glad.h>
 #include <imgui.h>
 #include <imgui_impl_sdl2.h>
 #include <imgui_impl_opengl3.h>
 #include <iostream>
-#include <thread>
 
 Window::Window()
 {
@@ -70,7 +69,7 @@ void Window::draw(State& state)
   this->getDebugGui().draw(state, *this);
 
   ImGui::Render();
-  ImGuiIO& io = ImGui::GetIO();
+  // ImGuiIO& io = ImGui::GetIO();
   if (this->updateVsync)
   {
     this->updateVsync = false;

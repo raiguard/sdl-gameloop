@@ -3,7 +3,7 @@
 #include "window.hpp"
 #include <chrono>
 #include <imgui.h>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <thread>
 
 typedef bool ShouldQuit;
