@@ -4,5 +4,4 @@ imgui.ini
 
 # Meson
 build
-subprojects/**/*
-!subprojects/*.wrap
+subprojects
