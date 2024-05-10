@@ -9,15 +9,15 @@ WidgetPtr& WidgetPtr::operator<<(std::shared_ptr<Widget> other)
 }
 
 Widget::Widget(Color color, Layout layout)
-  : color(color), layout(layout)
+  : layout(layout), color(color)
 {}
 
 Widget::Widget(Position position, Color color, Layout layout)
-  : position(position), color(color), layout(layout)
+  : position(position), layout(layout), color(color)
 {}
 
 Widget::Widget(Dimensions dimensions, Color color, Layout layout)
- : dimensions(dimensions), color(color), layout(layout)
+ : dimensions(dimensions), layout(layout), color(color)
 {}
 
 void Widget::applyLayout()
