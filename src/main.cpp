@@ -8,6 +8,7 @@
 
 typedef bool ShouldQuit;
 
+// Returns `true` if the game should be quit.
 ShouldQuit handleEvents(State& state, Window& window)
 {
   SDL_Event event;
